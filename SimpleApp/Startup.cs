@@ -28,6 +28,8 @@ namespace SimpleApp
         {
             services.InstallBussinessLogicHandlers();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
 
             services.AddDbContext<SimpleAppDbContext>(options =>
             {
@@ -62,6 +64,7 @@ namespace SimpleApp
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            app.UseCors("AllowAll");
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {

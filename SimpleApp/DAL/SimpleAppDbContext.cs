@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SimpleApp.DAL.Entities;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SimpleApp.DAL
 {
-    public class SimpleAppDbContext : DbContext
+    public class SimpleAppDbContext : IdentityDbContext<SimpleUser>
     {
         public SimpleAppDbContext(DbContextOptions<SimpleAppDbContext> options) : base(options)
         {

@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleApp.DAL;
+using SimpleApp.DAL.Entities;
+using SimpleApp.DAL.Repository;
 using SimpleApp.Infrastructure.CQRS;
 using SimpleApp.Infrastructure.CQRS.Command;
 using SimpleApp.Infrastructure.CQRS.Query;
@@ -35,6 +38,21 @@ namespace SimpleApp
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SimpleDbCS"));
             });
+
+            services.AddDefaultIdentity<SimpleUser>()
+                    .AddEntityFrameworkStores<SimpleAppDbContext>()
+                    .AddDefaultUI();
+            OAuth2
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequiredLength = 5;
+                options.SignIn.RequireConfirmedEmail = true;
+
+                options.User.AllowedUserNameCharacters =
+                        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.User.RequireUniqueEmail = true;
+            });
+
             var mappingConfig = new MapperConfiguration(mapConfig =>
             {
                 mapConfig.AddProfile(new SimpleProfile());
@@ -43,6 +61,7 @@ namespace SimpleApp
 
             services.AddSingleton(mapper);
             services.AddScoped<DbContext, SimpleAppDbContext>();
+            services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
             services.AddScoped<IQueryDispatcher, DefaultQueryDispatcher>();
             services.AddScoped<ICommandDispatcher, DefaultCommandDispatcher>();
 
@@ -72,6 +91,7 @@ namespace SimpleApp
                 c.RoutePrefix = string.Empty;
             });
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseMvc();
         }
     }

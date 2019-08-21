@@ -42,7 +42,7 @@ namespace SimpleApp
             services.AddDefaultIdentity<SimpleUser>()
                     .AddEntityFrameworkStores<SimpleAppDbContext>()
                     .AddDefaultUI();
-            OAuth2
+            //OAuth2
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequiredLength = 5;
